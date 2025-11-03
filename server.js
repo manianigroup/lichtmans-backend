@@ -13,7 +13,6 @@ dotenv.config();
 const app = express();
 
 // Middleware
-// app.use(cors());
 
 /* For Production */
 const allowedOrigins = [
@@ -23,6 +22,7 @@ const allowedOrigins = [
   "http://localhost:5173"                           // for local testing
 ].filter(Boolean); // removes undefined values
 
+// app.use(cors());
 app.use(cors({
   origin: function (origin, callback) {
     // allow requests with no origin (like mobile apps or curl requests)
