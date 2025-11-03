@@ -16,12 +16,28 @@ const app = express();
 // app.use(cors());
 
 /* For Production */
-const allowedOrigins = [process.env.FRONTEND_URL];
+const allowedOrigins = [
+  process.env.FRONTEND_URL,                         // e.g. your production domain
+  "https://fabulous-baklava-9efdeb.netlify.app",    // your Netlify test site
+  "https://lichtmansliquorstore.com",               // your final custom domain
+  "http://localhost:5173"                           // for local testing
+].filter(Boolean); // removes undefined values
 
 app.use(cors({
-  origin: allowedOrigins.length ? allowedOrigins : true, // true allows all for testing
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`❌ CORS blocked request from: ${origin}`);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
 }));
+
 
 app.use(express.json());
 
